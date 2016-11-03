@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="contact.css">
+  <!<link href="https://fonts.googleapis.com/css?family=Baloo+Tamma" rel="stylesheet">
+</head>
+<body>
+  <div id="header">
+  <h2>Contact list</h2>
+  </div>
+  <div id="contacts">
+  <div id="inputBox">
+    <h3 id="type">New Contact</h3>
+    <p>Name: </p><input id="name" placeholder="John Doe"></input></br>
+    <p>Phone: </p><input id="phone" placeholder="5555555555"></input></br>
+    <p>Email: </p><input id="email" placeholder="johndoe@yahoo.com"></input></br>
+    <p>Age: </p><input id="age" placeholder="50"></input></br>
+    <p>Birthday: </p><input id="birthday" placeholder="6/15/66"></input></br>
+    <p>Address: </p><input id="address" placeholder="555 Example Way St. George, UT 84790"></input></br>
+    <button id="save-button">Save</button>
+  </div>
+  <ul id="contact-list">
+  </ul>
+
+  <template id="contact">
+    <li><button id="editButton">Edit</button><button id="deleteButton">Delete</button></li>
+  </template>
+
+  </div>
+  <script src="contact.js"></script>
+</body>
+</html>
