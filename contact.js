@@ -6,14 +6,18 @@ var age = document.getElementById('age');
 var birthday = document.getElementById('birthday');
 var address = document.getElementById('address');
 var editpress = false;
+var editIndex = -1;
+var deletes = [];
+var reduce = 0;
 
-// document.getElementById("message")
-//     .addEventListener("keyup", function(event) {
-//     event.preventDefault();
-//     if (event.keyCode == 13) {
-//         document.getElementById("save-button").click();
-//     }
-// });
+document.getElementById("name")
+    .addEventListener("keyup", function(event) {
+    event.preventDefault();
+    if (event.keyCode == 13) {
+        document.getElementById("save-button").click();
+    }
+});
+
 
 saveButton.onclick = function (){
   name = document.getElementById('name').value
@@ -23,6 +27,15 @@ saveButton.onclick = function (){
   birthday = document.getElementById('birthday').value
   address = document.getElementById('address').value
   if (editpress){
+    reduce = 0;
+    for(var j = 0; j < deletes.length; j++){
+      if (deletes[j] < editIndex){
+        reduce += 1;
+      }
+    }
+    console.log("edit index "+editIndex+ "  reduce " +reduce);
+
+    document.getElementById('contact-list').children[editIndex].innerHTML = document.getElementById("name").value+"</br>" + document.getElementById('phone').value +"</br>" + "<button onclick='edit_row("+currentContact['id']+")'>Edit</button><button onclick='delete_row("+currentContact['id']+")'>Delete</button></br>";
     currentContact['name'] = document.getElementById('name').value
     currentContact['phone'] = document.getElementById('phone').value
     currentContact['email'] = document.getElementById('email').value
@@ -30,9 +43,7 @@ saveButton.onclick = function (){
     currentContact['birthday'] = document.getElementById('birthday').value
     currentContact['address'] = document.getElementById('address').value
     updatecontact();
-    console.log(currentContact);
     editpress = false;
-    document.getElementById("contact-list").innerHTML = "";
     document.getElementById('type').innerHTML = "New Contact";
     document.getElementById('name').value = "";
     document.getElementById('phone').value = "";
@@ -40,7 +51,7 @@ saveButton.onclick = function (){
     document.getElementById('age').value = "";
     document.getElementById('birthday').value = "";
     document.getElementById('address').value = "";
-    populate();
+    console.log(contacts);
     return
   }
   addcontact(function(){
@@ -53,7 +64,6 @@ saveButton.onclick = function (){
     document.getElementById('address').value = "";
     getcontacts(function(contacts){
       console.log("Success");
-      console.log(contacts);
         printcontacts(contacts[contacts.length-1]);
     },function(){
       console.error("Had a problem")
@@ -68,6 +78,7 @@ var addcontact = function (success, failure){
   post.onreadystatechange = function (){
     if (post.readyState == XMLHttpRequest.DONE){
       if (post.status >= 200 && post.status < 400) {
+        contacts = JSON.parse(post.responseText);
         success();
       } else {
         failure();
@@ -76,21 +87,23 @@ var addcontact = function (success, failure){
   };
   post.open("POST", "http://localhost:8080/contacts");
   post.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  console.log(name);
   post.send("name="+name+"&phone="+phone+"&email="+email+"&age="+age+"&birthday="+birthday+"&address="+address);
 };
 
 var count = 0;
 function printcontacts(item){
   var lst = document.getElementById('contact-list');
-  var ul = document.getElementsByTagName('ul');
   var c = document.querySelector("#contact");
   li = c.content.querySelectorAll("li");
-
-  li[0].innerHTML = item['name']+" " + item['phone'] +"</br>" + "<button onclick = 'edit_row("+count+")'>Edit</button><button onclick = 'delete_row("+count+")'>Delete</button></br>";
+  li[0].innerHTML = item['name']+"</br>" + item['phone'] +"</br>" + "<button onclick='edit_row("+item['id']+")'>Edit</button><button onclick='delete_row("+item['id']+")'>Delete</button></br>";
+  console.log("button number "+count);
   var clone = document.importNode(c.content, true);
-  ul[0].appendChild(clone);
-  count += 1;
+  lst.appendChild(clone);
+  console.log(document.getElementById("contact-list"));
+  if (editpress == false){
+    count += 1;
+  }
+  console.log("count: "+count)
 }
 
 var getcontacts = function (success, failure){
@@ -118,6 +131,7 @@ function populate(){
         contacts = JSON.parse(request.responseText);
         console.log("Contacts Loaded");
         console.log(contacts);
+        count = 0;
         for (var i = 0, len = contacts.length; i <len; i++){
           printcontacts(contacts[i]);
         }
@@ -137,9 +151,8 @@ var updatecontact = function (){
   request.onreadystatechange = function (){
     if (request.readyState == XMLHttpRequest.DONE){
       if (request.status >= 200 && request.status < 400) {
-        // contacts = JSON.parse(request.responseText);
+        contacts = JSON.parse(request.responseText);
         // success(contacts);
-
       } else {
         // failure();
       }
@@ -150,15 +163,15 @@ var updatecontact = function (){
   request.send("name="+currentContact['name']+"&phone="+currentContact['phone']+"&email="+currentContact['email']+"&age="+currentContact['age']+"&birthday="+currentContact['birthday']+"&address="+currentContact['address']);
 };
 
-var deletecontact = function (){
+var deletecontact = function (success, failure){
   var request = new XMLHttpRequest();
   request.onreadystatechange = function (){
     if (request.readyState == XMLHttpRequest.DONE){
       if (request.status >= 200 && request.status < 400) {
         // contacts = JSON.parse(request.responseText);
-        // success(contacts);
+        success();
       } else {
-        // failure();
+         failure();
       }
     }
   };
@@ -173,9 +186,27 @@ var currentContact = -1;
 function edit_row(i) {
     // if(!submitpress){
     //     submitpress = true;
+    if (!editpress){
+    getcontacts(function(contacts){
+      console.log("Got contacts");
+    },function(){
+      console.error("Had a problem getting contacts")
+    });
         editpress = true;
-        currentContact = contacts[i];
-
+        var index = 0;
+        for (var j in contacts)
+        {
+          if(contacts[j]['id'] == i){
+              console.log(contacts[j]['id']);
+              currentContact = contacts[j];
+              editIndex = j;
+              break;
+            }
+            index++;
+        }
+        console.log("j "+j);
+        console.log(currentContact);
+        // editIndex = contacts[j]['id'];
         document.getElementById('name').value = currentContact['name'];
         document.getElementById('phone').value = currentContact['phone'];
         document.getElementById('email').value = currentContact['email'];
@@ -183,17 +214,61 @@ function edit_row(i) {
         document.getElementById('birthday').value = currentContact['birthday'];
         document.getElementById('address').value = currentContact['address'];
         document.getElementById('type').innerHTML = "Edit Contact";
-
     // }
+  }else{
+    editpress = false;
+    document.getElementById('type').innerHTML = "New Contact";
+    document.getElementById('name').value = "";
+    document.getElementById('phone').value = "";
+    document.getElementById('email').value = "";
+    document.getElementById('age').value = "";
+    document.getElementById('birthday').value = "";
+    document.getElementById('address').value = "";
+  }
 }
 
 
 function delete_row(index) {
     // if(!submitpress){
+
+    getcontacts(function(contacts){
+      console.log("Got contacts");
+    },function(){
+      console.error("Had a problem getting contacts")
+    });
+    var deleteIndex;
+    for (var c in contacts)
+    {
+      console.log(c);
+      // console.log(contacts[Object.keys(contacts).length - 1]['id']);
+      if(contacts[c]['id'] == index){
+        console.log(contacts[c]['id']);
+        currentContact = contacts[c];
+        deleteIndex = c;
+        break;
+      }
+    }
         var ul = document.getElementById("contact-list");
-        ul.removeChild(ul.childNodes[index]);
-        currentContact = contacts[index];
-        deletecontact();
-        populate();
+        console.log("deleted from " + deleteIndex);
+        deletecontact(function(contacts){
+          console.log("Successful delete");
+          if(!deletes.includes(deleteIndex)){
+            deletes.push(deleteIndex)
+          }
+          reduce = 0;
+          for(var j = 0; j < deletes.length; j++){
+            if (deletes[j] < c){
+              reduce += 1;
+            }
+          }
+          console.log("c "+c +" reduce "+reduce);
+          console.log(contacts);
+          ul.removeChild(ul.children[deleteIndex]);
+          console.log("reduce " + reduce);
+        },function(){
+          console.error("Had a problem deleting!")
+        });
+
+        console.log(contacts);
     // }
 }

@@ -19,7 +19,6 @@ class ContactsServer(BaseHTTPRequestHandler):
             #handle contacts
             contacts = lst.getContacts()
             self.header200()
-            print(contacts)
             self.wfile.write(bytes(contacts, "utf-8"))
         else:
             self.header404()
@@ -29,21 +28,22 @@ class ContactsServer(BaseHTTPRequestHandler):
         lst = ContactsDB()
         if self.path.startswith("/contacts"):
             length = self.header201()
-            print("length" + str(length))
             data, amount = self.parseInput(length)
             if amount > 6:
                 self.header404()
                 return
             lst.addContact(data)
+            self.wfile.write(bytes(lst.getContacts(), "utf-8"))
         else:
             self.header404()
 
     def do_PUT(self):
         lst = ContactsDB()
         if self.path.startswith("/contacts/"):
-            length = self.header201()
+            length = self.header204()
             data, num = self.parseInput(length)
             lst.updateContact(self.path, data)
+            self.wfile.write(bytes(lst.getContacts(), "utf-8"))
         else:
             self.header404()
 
@@ -76,7 +76,7 @@ class ContactsServer(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header("Content-Type", "text/html")
         self.end_headers()
-        self.wfile.write(bytes("<p>Couldn't read from file.</p>", "utf-8"))
+        self.wfile.write(bytes("<p>Couldn't locate in database</p>", "utf-8"))
 
     def header201(self):
         #created element

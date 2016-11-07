@@ -6,7 +6,7 @@ html {
 }
 
 body {
-  background-image:  url("palm-trees.jpg");
+  background-image:  url("Contacts.jpg");
   font-family: "Lato", sans-serif;
   color: 222;
   margin: auto;
@@ -21,8 +21,8 @@ ul{
   background-color:#fff;
   border-radius: 5px;
   display: inline;
-  max-width:200px;
-  min-width:200px;
+  max-width:300px;
+  min-width:300px;
   margin: auto;
   padding: 5px;
   margin: 20px;
@@ -36,17 +36,19 @@ li{
   padding: 5px;
   display: inline;
   width: auto;
-  background-color: #888;
-  margin: 5px;
-  border-radius: 5px;
+  background-color: #ccc;
+  margin-left: 2px;
+  margin-right: 10px;
   float: left;
   clear: both;
+  border-bottom: solid 1px #999;
+  min-width: 96%;
 }
 
 button{
   font-family:"Lato", sans-serif;
   color: #fff;
-  background-color: #118823;
+  background-color: #1a6aed;
   border: none;
   text-align: center;
   display: inline-block;
@@ -71,7 +73,7 @@ input{
 #inputBox{
   text-align: center;
   background-color: #fff;
-  margin-left: 2%;
+  margin-left: 30%;
   /*display:inline-block;*/
   min-width: 200px;
   width: auto;

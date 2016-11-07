@@ -43,7 +43,7 @@ class ContactsDB:
         connection = sqlite3.connect("demodb.db")
         connection.row_factory = self.rowFactory
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM contacts WHERE id = ?", personID)
+        cursor.execute("SELECT * FROM contacts WHERE id = (?)", (personID,))
         rows = cursor.fetchall()
         connection.close()
         return json.dumps(rows)
@@ -62,10 +62,10 @@ class ContactsDB:
         connection = sqlite3.connect("demodb.db")
         connection.row_factory = self.rowFactory
         cursor = connection.cursor()
-        cursor.execute("DELETE FROM contacts WHERE id = ?", personID)
+        cursor.execute("DELETE FROM contacts WHERE id = (?)", (personID,))
         connection.commit()
         # rows = cursor.fetchall()
-        # connection.close()
+        connection.close()
         # return json.dumps(rows)
 
 
@@ -76,7 +76,10 @@ class ContactsDB:
         cursor = connection.cursor()
         cursor.execute("INSERT INTO contacts (name,phone,email,age,birthday,address) VALUES (?,?,?,?,?,?)",(contactInfo[0],contactInfo[1],contactInfo[2],contactInfo[3],contactInfo[4],contactInfo[5]))
         connection.commit()
+        cursor.execute("SELECT * FROM contacts;")
+        rows = cursor.fetchall()
         connection.close()
+        return json.dumps(rows)
 
     def updateContact(self, path, contactInfo):
         personID = self.getPath(path)
@@ -84,9 +87,9 @@ class ContactsDB:
         connection = sqlite3.connect("demodb.db")
         connection.row_factory = self.rowFactory
         cursor = connection.cursor()
-        print(contactInfo)
         cursor.execute("UPDATE contacts SET name=?,phone=?,email=?,age=?,birthday=?,address=? WHERE id=?",(contactInfo[0],contactInfo[1],contactInfo[2],contactInfo[3],contactInfo[4],contactInfo[5],personID))
         connection.commit()
+        cursor.execute("SELECT * FROM contacts;")
         rows = cursor.fetchall()
         connection.close()
         return json.dumps(rows)
