@@ -33,7 +33,6 @@ saveButton.onclick = function (){
         reduce += 1;
       }
     }
-    console.log("edit index "+editIndex+ "  reduce " +reduce);
 
     document.getElementById('contact-list').children[editIndex].innerHTML = document.getElementById("name").value+"</br>" + document.getElementById('phone').value +"</br>" + "<button onclick='edit_row("+currentContact['id']+")'>Edit</button><button onclick='delete_row("+currentContact['id']+")'>Delete</button></br>";
     currentContact['name'] = document.getElementById('name').value
@@ -51,7 +50,6 @@ saveButton.onclick = function (){
     document.getElementById('age').value = "";
     document.getElementById('birthday').value = "";
     document.getElementById('address').value = "";
-    console.log(contacts);
     return
   }
   addcontact(function(){
@@ -96,14 +94,12 @@ function printcontacts(item){
   var c = document.querySelector("#contact");
   li = c.content.querySelectorAll("li");
   li[0].innerHTML = item['name']+"</br>" + item['phone'] +"</br>" + "<button onclick='edit_row("+item['id']+")'>Edit</button><button onclick='delete_row("+item['id']+")'>Delete</button></br>";
-  console.log("button number "+count);
   var clone = document.importNode(c.content, true);
   lst.appendChild(clone);
   console.log(document.getElementById("contact-list"));
   if (editpress == false){
     count += 1;
   }
-  console.log("count: "+count)
 }
 
 var getcontacts = function (success, failure){
@@ -130,7 +126,6 @@ function populate(){
       if (request.status >= 200 && request.status < 400) {
         contacts = JSON.parse(request.responseText);
         console.log("Contacts Loaded");
-        console.log(contacts);
         count = 0;
         for (var i = 0, len = contacts.length; i <len; i++){
           printcontacts(contacts[i]);
@@ -197,15 +192,12 @@ function edit_row(i) {
         for (var j in contacts)
         {
           if(contacts[j]['id'] == i){
-              console.log(contacts[j]['id']);
               currentContact = contacts[j];
               editIndex = j;
               break;
             }
             index++;
         }
-        console.log("j "+j);
-        console.log(currentContact);
         // editIndex = contacts[j]['id'];
         document.getElementById('name').value = currentContact['name'];
         document.getElementById('phone').value = currentContact['phone'];
@@ -242,14 +234,12 @@ function delete_row(index) {
       console.log(c);
       // console.log(contacts[Object.keys(contacts).length - 1]['id']);
       if(contacts[c]['id'] == index){
-        console.log(contacts[c]['id']);
         currentContact = contacts[c];
         deleteIndex = c;
         break;
       }
     }
         var ul = document.getElementById("contact-list");
-        console.log("deleted from " + deleteIndex);
         deletecontact(function(contacts){
           console.log("Successful delete");
           if(!deletes.includes(deleteIndex)){
@@ -261,14 +251,11 @@ function delete_row(index) {
               reduce += 1;
             }
           }
-          console.log("c "+c +" reduce "+reduce);
-          console.log(contacts);
           ul.removeChild(ul.children[deleteIndex]);
           console.log("reduce " + reduce);
         },function(){
           console.error("Had a problem deleting!")
         });
 
-        console.log(contacts);
     // }
 }

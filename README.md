@@ -1,13 +1,12 @@
+#Contacts
 
-#contacts
-
-**1. id
+1. id
 2. name
 3. phone
 4. email
 5. age
 6. birthday
-7. address**
+7. address
 
 
 #Database Schema
@@ -21,17 +20,19 @@
 
 #REST endpoint methods
 getContacts
-  do_GET
-  localhost:8080/contacts and localhost:8080/contacts/{key}
+  GET /contacts
+  GET /contacts/id
+  localhost:8080/contacts
+  localhost:8080/contacts/id
 
 addContact
-  do_POST
+  POST /contacts
   localhost:8080/contacts
 
 updateContact
-  do_PUT
-  localhost:8080/contacts/{key}
+  PUT /contacts/id
+  localhost:8080/contacts/id
 
 deleteContact
-  do_DELETE
-  localhost:8080/contacts/{key}
+  DELETE /contacts/id
+  localhost:8080/contacts/id
