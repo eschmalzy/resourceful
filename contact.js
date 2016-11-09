@@ -221,8 +221,9 @@ function edit_row(i) {
 
 
 function delete_row(index) {
-    // if(!submitpress){
-
+  
+    var result = confirm("Want to delete?");
+    if(result){
     getcontacts(function(contacts){
       console.log("Got contacts");
     },function(){
@@ -256,6 +257,5 @@ function delete_row(index) {
         },function(){
           console.error("Had a problem deleting!")
         });
-
-    // }
+      }
 }
