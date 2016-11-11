@@ -19,20 +19,22 @@
                       address VARCHAR(64));**
 
 #REST endpoint methods
-getContacts
+Retrieve collection
   GET /contacts
-  GET /contacts/id
   localhost:8080/contacts
+
+Retrieve element
+  GET /contacts/id
   localhost:8080/contacts/id
 
-addContact
+Create element
   POST /contacts
   localhost:8080/contacts
 
-updateContact
+Update element
   PUT /contacts/id
   localhost:8080/contacts/id
 
-deleteContact
+Delete element
   DELETE /contacts/id
   localhost:8080/contacts/id

@@ -6,6 +6,14 @@ class ContactsDB:
     def __init__(self):
         pass
 
+    def getIDS(self):
+        connection = sqlite3.connect("demodb.db")
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT id from contacts")
+        result = cursor.fetchall()
+        return result
+
     def getPath(self, idPath):
         i = -1
         endChar = idPath[i]
@@ -62,6 +70,10 @@ class ContactsDB:
         connection = sqlite3.connect("demodb.db")
         connection.row_factory = self.rowFactory
         cursor = connection.cursor()
+        cursor.execute("SELECT * from contacts WHERE id = (?)",(personID,))
+        result = cursor.fetchall()
+        if result == []:
+            return False
         cursor.execute("DELETE FROM contacts WHERE id = (?)", (personID,))
         connection.commit()
         # rows = cursor.fetchall()
@@ -87,6 +99,10 @@ class ContactsDB:
         connection = sqlite3.connect("demodb.db")
         connection.row_factory = self.rowFactory
         cursor = connection.cursor()
+        cursor.execute("SELECT * from contacts WHERE id = (?)",(personID,))
+        result = cursor.fetchall()
+        if result == []:
+            return False
         cursor.execute("UPDATE contacts SET name=?,phone=?,email=?,age=?,birthday=?,address=? WHERE id=?",(contactInfo[0],contactInfo[1],contactInfo[2],contactInfo[3],contactInfo[4],contactInfo[5],personID))
         connection.commit()
         cursor.execute("SELECT * FROM contacts;")

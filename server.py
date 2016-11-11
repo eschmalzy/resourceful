@@ -8,9 +8,9 @@ class ContactsServer(BaseHTTPRequestHandler):
         #index or list action
         lst = ContactsDB()
         if self.path.startswith("/contacts/"):
-            idPath = self.path.startswith("/contacts/")
+            idPath = self.path
             contact = lst.getContact(idPath)
-            if contact == "":
+            if len(contact) == 2:
                 self.header404()
             else:
                 self.header200()
@@ -40,18 +40,30 @@ class ContactsServer(BaseHTTPRequestHandler):
     def do_PUT(self):
         lst = ContactsDB()
         if self.path.startswith("/contacts/"):
-            length = self.header204()
-            data, num = self.parseInput(length)
-            lst.updateContact(self.path, data)
-            self.wfile.write(bytes(lst.getContacts(), "utf-8"))
+            id = lst.getPath(self.path)
+            allid = lst.getIDS()
+            for i in allid:
+                if i == id:
+                    length = self.header204()
+                    data, num = self.parseInput(length)
+                    lst.updateContact(self.path, data)
+                    self.wfile.write(bytes(lst.getContacts(), "utf-8"))
+                else:
+                    self.header404()
+        elif self.path.startswith("/contacts"):
+            self.header404()
         else:
             self.header404()
 
     def do_DELETE(self):
         lst = ContactsDB()
         if self.path.startswith("/contacts/"):
-            self.header204()
-            lst.deleteContact(self.path)
+            delete = lst.deleteContact(self.path)
+            if delete == False:
+                self.header404()
+            else:
+                self.header204()
+
         else:
             self.header404()
 
